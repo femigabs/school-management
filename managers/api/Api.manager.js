@@ -172,7 +172,8 @@ module.exports = class ApiHandler {
                     } else if (result.error) {
                         return this.managers.responseDispatcher.dispatch(res, { ok: false, message: result.error, code: result?.code, message: result?.message });
                     } else {
-                        return this.managers.responseDispatcher.dispatch(res, { ok: true, data: result });
+                        const { status, message, data } = result;
+                        return this.managers.responseDispatcher.dispatch(res, { ok: true, data: data, message, code: status });
                     }
                 }
             }

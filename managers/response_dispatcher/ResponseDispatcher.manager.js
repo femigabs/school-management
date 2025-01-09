@@ -4,11 +4,12 @@ module.exports = class ResponseDispatcher {
     }
     dispatch(res, { ok, data, code, errors, message, msg }) {
         let statusCode = code ? code : (ok == true) ? 200 : 400;
+        const errorObj = (ok == true) ? {} : { errors: errors || []}
         return res.status(statusCode).send({
             ok: ok || false,
-            data: data || {},
-            errors: errors || [],
             message: msg || message || '',
+            data: data || null,
+            ...errorObj
         });
     }
 }

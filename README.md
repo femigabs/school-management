@@ -68,6 +68,9 @@ Create a `.env` file and add the environment variables described in the `.env.ex
 
     $ npm run test
 
+## Test Coverage
+![alt text](<Screenshot 2025-01-10 at 00.03.12.png>)
+
 ## Technologies
 
 - NodeJS
@@ -77,8 +80,122 @@ Create a `.env` file and add the environment variables described in the `.env.ex
 - Postman
 
 ## API Documentation
-- postman: https://documenter.getpostman.com/
+- postman: 
+
+## API Flow
+- Creating Users:
+To create additional users, you must provide a superadmin token for authorization. A default superadmin user has already been seeded in the system to initiate this process.
+
+SuperAdmin Login Credentials
+```
+{
+    "email": "superadmin1@gmail.com",
+    "password": "Qgubinl_653nop"
+}
+```
+
+
+## Database Schema Documentation
+
+This section describes the database models for the application. Each schema is defined using Mongoose, with relationships and field-level constraints.
+
+---
+
+## User Schema
+
+The `User` schema represents the users in the system, which can be either `superadmin` or `admin`.
+
+| Field              | Type                | Description                                    | Constraints                       |
+|--------------------|---------------------|------------------------------------------------|-----------------------------------|
+| `name`             | `String`           | Full name of the user                         | Required                         |
+| `email`            | `String`           | User's email address                          | Required, Unique                 |
+| `password`         | `String`           | User's hashed password                        | Required                         |
+| `temporaryPassword`| `Boolean`          | Indicates if the password is temporary        | Default: `true`                  |
+| `role`             | `String`           | Role of the user (`superadmin`, `admin`)      | Required, Enum                   |
+| `school`           | `ObjectId`         | Reference to the associated `School`          | Optional                         |
+| `createdAt`        | `Date`             | Record creation timestamp                     | Default: Current Date            |
+| `updatedAt`        | `Date`             | Last update timestamp                         | Default: Current Date            |
+| `deletedAt`        | `Date`             | Soft delete timestamp                         | Default: `null`                  |
+
+**Relationships**:
+- Each `User` may be associated with one `School`.
+
+---
+
+## School Schema
+
+The `School` schema represents the educational institutions managed by the system.
+
+| Field            | Type                | Description                                    | Constraints                       |
+|------------------|---------------------|------------------------------------------------|-----------------------------------|
+| `name`           | `String`           | Name of the school                            | Required                         |
+| `address`        | `String`           | Address of the school                         | Required                         |
+| `email`          | `String`           | Contact email address                         | Required                         |
+| `phone`          | `String`           | Contact phone number                          | Required                         |
+| `admins`         | `[ObjectId]`       | Array of references to `User` (admin users)   | Optional                         |
+| `classrooms`     | `[ObjectId]`       | Array of references to `Classroom`            | Optional                         |
+| `students`       | `[ObjectId]`       | Array of references to `Student`              | Optional                         |
+| `createdAt`      | `Date`             | Record creation timestamp                     | Default: Current Date            |
+| `updatedAt`      | `Date`             | Last update timestamp                         | Default: Current Date            |
+| `deletedAt`      | `Date`             | Soft delete timestamp                         | Default: `null`                  |
+
+**Relationships**:
+- Each `School` can have multiple `Classrooms` and `Students`.
+- Each `School` can have multiple `admins` (users with the `admin` role).
+
+---
+
+## Classroom Schema
+
+The `Classroom` schema represents a class within a school.
+
+| Field            | Type                | Description                                    | Constraints                       |
+|------------------|---------------------|------------------------------------------------|-----------------------------------|
+| `schoolId`       | `ObjectId`         | Reference to the associated `School`          | Required                         |
+| `name`           | `String`           | Name of the classroom                         | Required                         |
+| `capacity`       | `Number`           | Maximum number of students                    | Required                         |
+| `resources`      | `Array`            | List of resources (e.g., books, computers)    | Embedded Schema: `ResourceSchema`|
+| `students`       | `[ObjectId]`       | Array of references to `Student`              | Optional                         |
+| `createdAt`      | `Date`             | Record creation timestamp                     | Default: Current Date            |
+| `updatedAt`      | `Date`             | Last update timestamp                         | Default: Current Date            |
+| `deletedAt`      | `Date`             | Soft delete timestamp                         | Default: `null`                  |
+
+**Resource Schema** (Embedded):
+
+| Field            | Type                | Description                                    | Constraints                       |
+|------------------|---------------------|------------------------------------------------|-----------------------------------|
+| `type`           | `String`           | Type of resource (e.g., "Book", "Computer")    | Required                         |
+| `name`           | `String`           | Name of the resource                          | Required                         |
+| `quantity`       | `Number`           | Quantity of the resource                      | Required, Min: `0`               |
+
+**Relationships**:
+- Each `Classroom` belongs to one `School`.
+- Each `Classroom` can have multiple `Students`.
+
+---
+
+## Student Schema
+
+The `Student` schema represents students enrolled in classrooms.
+
+| Field            | Type                | Description                                    | Constraints                       |
+|------------------|---------------------|------------------------------------------------|-----------------------------------|
+| `name`           | `String`           | Full name of the student                      | Required                         |
+| `contactEmail`   | `String`           | Student's contact email                       | Required                         |
+| `contactPhone`   | `String`           | Student's contact phone                       | Required                         |
+| `dateOfBirth`    | `String`           | Student's date of birth                       | Required                         |
+| `gender`         | `String`           | Gender of the student                         | Required                         |
+| `classroomId`    | `ObjectId`         | Reference to the associated `Classroom`       | Required                         |
+| `createdAt`      | `Date`             | Record creation timestamp                     | Default: Current Date            |
+| `updatedAt`      | `Date`             | Last update timestamp                         | Default: Current Date            |
+| `deletedAt`      | `Date`             | Soft delete timestamp                         | Default: `null`                  |
+
+**Relationships**:
+- Each `Student` belongs to one `Classroom`.
+
+---
+
 
 ## Copyright
 
-Copyright (c) 2021 Femi Babayemi
+Copyright (c) 2025 Femi Babayemi

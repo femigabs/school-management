@@ -48,16 +48,17 @@ class User {
             });
 
             const savedUser = await newUser.save();
-            const longToken = this.tokenManager.genLongToken({
+            const data = savedUser.toObject();
+            const token = this.tokenManager.genLongToken({
                 userId: savedUser._id,
                 role,
                 schoolId,
             });
 
             // Todo: send through email
-            savedUser.password = temporaryPassword;
+            data.password = temporaryPassword;
 
-            return { status: 201, user: savedUser, longToken };
+            return { status: 201, data: { ...data, token }, message: "User created successfully" };
         } catch (error) {
             console.error("Error creating user:", error);
             const message = error?.code ? error.message : "An error occurred while creating user";
@@ -91,7 +92,7 @@ class User {
             });
 
             const { password: hashedPassword, ...result } = user;
-            return { result, token };
+            return { status: 200, data: { ...result, token }, message: "User logged in successfully" };
         } catch (error) {
             console.error("Login Error:", error);
             const message = error?.code ? error.message : "An error occurred while logging in";
@@ -124,7 +125,7 @@ class User {
             user.temporaryPassword = false;
             await user.save();
 
-            return { status: 200, message: "Password changed successfully" };
+            return { status: 200, message: "Password changed successfully", data: null };
         } catch (error) {
             console.error("Change password Error:", error);
             const message = error?.code ? error.message : "An error occurred while changing the password";

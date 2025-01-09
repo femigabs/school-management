@@ -39,7 +39,7 @@ class Student {
             payload.classroomId = classroomId;
 
             const newStudent = await this.mongomodels.student.create(payload);
-            return { status: 201, student: newStudent, message: "Student enrolled successfully" };
+            return { status: 201, data: newStudent, message: "Student enrolled successfully" };
         } catch (error) {
             console.error("Error creating student:", error);
             const message = error?.code ? error.message : "An error occurred while creating student";
@@ -63,8 +63,10 @@ class Student {
 
             Object.assign(student, { ...payload, updatedAt: new Date() });
             const updatedStudent = await student.save();
+            const data = updatedStudent.toObject();
 
-            return { status: 200, student: updatedStudent, message: "Student updated successfully" };
+
+            return { status: 200, data: data, message: "Student updated successfully" };
         } catch (error) {
             console.error("Error updating student:", error);
             const message = error?.code ? error.message : "An error occurred while updating student";
@@ -81,7 +83,7 @@ class Student {
             await StudentHelper.checkAuthorization({ role, schoolId }, ["superadmin", "admin"], id, this.mongomodels.classroom);
 
             const students = await this.mongomodels.student.find({ classroomId: id, deletedAt: null });
-            return { status: 200, students, message: "Students fetched successfully" };
+            return { status: 200, data: students, message: "Students fetched successfully" };
         } catch (error) {
             console.error("Error fetching students:", error);
             const message = error?.code ? error.message : "An error occurred while fetching students";
@@ -99,7 +101,7 @@ class Student {
             const student = await HelperManager.fetchModelById(this.mongomodels.student, id, "Student not found");
             await StudentHelper.checkAuthorization({ role, schoolId }, ["superadmin", "admin"], student.classroomId, this.mongomodels.classroom);
 
-            return { status: 200, student, message: "Student fetched successfully" };
+            return { status: 200, data: student, message: "Student fetched successfully" };
         } catch (error) {
             console.error("Error fetching student:", error);
             const message = error?.code ? error.message : "An error occurred while fetching student";
@@ -120,7 +122,7 @@ class Student {
             student.deletedAt = new Date();
             await student.save();
 
-            return { status: 200, message: "Student deleted successfully" };
+            return { status: 200, data: null, message: "Student deleted successfully" };
         } catch (error) {
             console.error("Error deleting student:", error);
             const message = error?.code ? error.message : "An error occurred while deleting student";

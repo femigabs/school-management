@@ -19,18 +19,6 @@ const schoolSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  admins: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User', 
-  }],
-  classrooms: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Classroom'
-  }],
-  students: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Student'
-  }],
   createdAt: {
     type: Date,
     default: Date.now,
@@ -43,7 +31,8 @@ const schoolSchema = new mongoose.Schema({
     type: Date,
     default: null,
   },
-});
+}, { versionKey: false });
 
+schoolSchema.index({ name: 1 });
 
 module.exports = mongoose.model('School', schoolSchema);

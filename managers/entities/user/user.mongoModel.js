@@ -39,6 +39,8 @@ const UserSchema = new mongoose.Schema({
     type: Date,
     default: null,
   },
-});
+}, { versionKey: false });
+
+UserSchema.index({ email: 1 });
 
 module.exports = mongoose.model('User', UserSchema);

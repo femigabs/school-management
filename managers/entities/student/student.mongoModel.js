@@ -16,7 +16,7 @@ const studentSchema = new mongoose.Schema({
     required: true,
   },
   dateOfBirth: {
-    type: String,
+    type: Date,
     required: true,
   },
   gender: {
@@ -40,7 +40,9 @@ const studentSchema = new mongoose.Schema({
     type: Date,
     default: null,
   },
-});
+}, { versionKey: false });
+
+studentSchema.index({ classroomId: 1 });
 
 // Export the Mongoose model
 module.exports = mongoose.model('Student', studentSchema);

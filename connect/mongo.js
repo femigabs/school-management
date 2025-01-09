@@ -8,7 +8,6 @@ module.exports = ({uri})=>{
     useUnifiedTopology: true,
   });
 
-
   // When successfully connected
   mongoose.connection.on('connected', function () {
     console.log('💾  Mongoose default connection open');

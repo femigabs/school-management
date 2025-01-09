@@ -31,6 +31,7 @@ const classroomSchema = new mongoose.Schema({
   capacity: {
     type: Number,
     required: true,
+    min: 1,
   },
   resources: [ResourceSchema],
   students: [{
@@ -49,7 +50,9 @@ const classroomSchema = new mongoose.Schema({
     type: Date,
     default: null,
   },
-});
+}, { versionKey: false });
+
+classroomSchema.index({ schoolId: 1 });
 
 // Export the Mongoose model
 module.exports = mongoose.model('Classroom', classroomSchema);

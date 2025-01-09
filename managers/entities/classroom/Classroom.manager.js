@@ -49,7 +49,7 @@ class Classroom {
             });
     
             const savedClassroom = await newClassroom.save();
-            return { status: 201, classroom: savedClassroom, message: "classroom created successfully" };
+            return { status: 201, data: savedClassroom, message: "classroom created successfully" };
         } catch (error) {
             console.error("Error creating classroom:", error);
             const message = error?.code ? error.message : "An error occurred while creating classrooms";
@@ -87,7 +87,7 @@ class Classroom {
             classroom.updatedAt = new Date();
     
             const updatedClassroom = await classroom.save();
-            return { status: 200, classroom: updatedClassroom, message: "classroom updated successfully" };
+            return { status: 200, data: updatedClassroom, message: "classroom updated successfully" };
         } catch (error) {
             console.error("Error updating classroom:", error);
             const message = error?.code ? error.message : "An error occurred while updating classrooms";
@@ -108,7 +108,7 @@ class Classroom {
             deletedAt: null,
         });
 
-        return { status: 200, classrooms, message: "classrooms fetched successfully" };
+        return { status: 200, data: classrooms, message: "classrooms fetched successfully" };
         } catch (error) {
             console.error("Error fetching classrooms:", error);
             const message = error?.code ? error.message : "An error occurred while fetching classrooms";
@@ -127,7 +127,7 @@ class Classroom {
     
             ClassroomHelper.checkAuthorization({ role, adminSchoolId }, ["superadmin", "admin"], classroom.schoolId);
     
-            return { status: 200, classroom, message: "classroom fetched successfully" };    
+            return { status: 200, data: classroom, message: "classroom fetched successfully" };    
         } catch (error) {
             console.error("Error fetching classroom:", error);
             const message = error?.code ? error.message : "An error occurred while fetching classroom";
@@ -148,7 +148,7 @@ class Classroom {
             classroom.deletedAt = new Date();
             await classroom.save();
     
-            return { status: 200, classroom: null, message: "classroom deleted successfully" };      
+            return { status: 200, data: null, message: "classroom deleted successfully" };      
         } catch (error) {
             console.error("Error deleting classroom:", error);
             const message = error?.code ? error.message : "An error occurred while deleting classroom";

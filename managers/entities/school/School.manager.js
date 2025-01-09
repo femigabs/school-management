@@ -42,7 +42,7 @@ class School {
             const newSchool = new this.mongomodels.school(payload);
             const savedSchool = await newSchool.save();
 
-            return { status: 201, school: savedSchool };
+            return { status: 201, data: savedSchool, message: "school created successfully" };
         } catch (error) {
             console.error("Error creating school:", error);
             const message = error?.code ? error.message : "An error occurred while creating school";
@@ -54,9 +54,76 @@ class School {
         try {
             SchoolHelper.checkAuthorization(__token.role, ["superadmin"]);
 
-            const schools = await this.mongomodels.school.find({ deletedAt: null });
+            const schools = await this.mongomodels.school.aggregate([
+                {
+                    $match: {
+                        deletedAt: null,
+                    },
+                },
+                {
+                    $lookup: {
+                        from: 'users',
+                        localField: '_id',
+                        foreignField: 'school',
+                        as: 'admins',
+                        pipeline: [
+                            {
+                                $project: {
+                                    password: 0,
+                                    temporaryPassword: 0,
+                                    deletedAt: 0,
+                                },
+                            },
+                        ]
+                    },
+                },
+                {
+                    $lookup: {
+                        from: 'classrooms',
+                        localField: '_id',
+                        foreignField: 'schoolId',
+                        as: 'classrooms',
+                        pipeline: [
+                            {
+                                $project: {
+                                    deletedAt: 0,
+                                },
+                            },
+                        ]
+                    },
+                },
+                {
+                    $lookup: {
+                        from: 'students',
+                        localField: '_id',
+                        foreignField: 'schoolId',
+                        as: 'students',
+                        pipeline: [
+                            {
+                                $project: {
+                                    deletedAt: 0,
+                                },
+                            },
+                        ]
+                    },
+                },
+                {
+                    $project: {
+                        name: 1,
+                        address: 1,
+                        email: 1,
+                        phone: 1,
+                        createdAt: 1,
+                        updatedAt: 1,
+                        deletedAt: 1,
+                        admins: 1,
+                        classrooms: 1,
+                        students: 1,
+                    },
+                },
+            ]);
 
-            return { status: 200, school: schools };
+            return { status: 200, data: schools, message: "schools fetched successfully" };
         } catch (error) {
             console.error("Error fetching schools:", error);
             const message = error?.code ? error.message : "An error occurred while fetching schools";
@@ -81,7 +148,7 @@ class School {
                 return nonAuthorizedError("Access denied");
             }
 
-            return { status: 200, school };
+            return { status: 200, data: school, message: "school fetced successfully" };
         } catch (error) {
             console.error("Error fetching school:", error);
             const message = error?.code ? error.message : "An error occurred while fetching school";
@@ -105,7 +172,7 @@ class School {
                 return notFoundError("School not found");
             }
 
-            return { status: 200, school: updatedSchool };
+            return { status: 200, message: "school updated successfully", data: updatedSchool };
         } catch (error) {
             console.error("Error updating school:", error);
             const message = error?.code ? error.message : "An error occurred while updating school";
@@ -125,7 +192,7 @@ class School {
                 return notFoundError("School not found");
             }
 
-            return { status: 200, school: null };
+            return { status: 200, data: null, message: "school deleted successfully" };
         } catch (error) {
             console.error("Error deleting school:", error);
             const message = error?.code ? error.message : "An error occurred while deleting school";
@@ -151,7 +218,8 @@ class School {
             user.school = schoolId;
             await user.save();
 
-            return { status: 200, school: null };
+            return { status: 200, data: null, message: "Admin assigned successfully" };
+
         } catch (error) {
             console.error("Error assigning admin:", error);
             const message = error?.code ? error.message : "An error occurred while assigning admin";
